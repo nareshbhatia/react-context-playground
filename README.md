@@ -5,16 +5,30 @@ components that are consuming the context.
 
 ![screenshot](assets/screenshot.png)
 
-## Technique
+In the application above, clicking on the "Switch to Edit Mode" button, puts the
+left sidebar into edit mode. Also, the headers of the 6 widgets are put into
+edit mode. Clicking the button again brings the app back into view mode. This
+feature is enabled by placing a `ViewStateContextProvider` at the root of the
+component tree (see [main.tsx](src/main.tsx)). This provider encapsulates the
+`viewState` which is toggled by the button. The interesting part is that
+although the state in the provider is changing, its immediate children are not
+rerendered. Only the context consumers in the component tree are rerendered.
+This can be seen in the React profiler flamegraph (see below). Notice that when
+the provider gets rerendered, none of its immediate children are rerendering.
+Only the `ViewModeToggle` button, the Sidebar and the six `WidgetHeaders` are
+rerendering because they are all context consumers.
+
+![profiler flamegraph](assets/profiler-flamegraph.png)
+
+## Optimization Technique
 
 The basic technique is to return the same element reference from the context
-provider as it did the last time. This will make React skip the re-rendering of
+provider as it did the last time. This will make React skip the rerendering of
 that particular child. Here's the
 [relevant code](src/contexts/ViewStateContext.tsx#L17-L29):
 
 ```tsx
 function ViewStateContextProvider({ children }: ViewStateContextProviderProps) {
-  console.log('ViewStateContextProvider.render');
   const [viewState, setViewState] = useState<ViewState>({
     isEditing: false,
   });
