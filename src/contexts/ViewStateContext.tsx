@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import * as React from 'react';
 
 // ---------- ViewStateContext ----------
 type ViewState = { isEditing: boolean };
@@ -16,7 +16,7 @@ interface ViewStateContextProviderProps {
 
 function ViewStateContextProvider({ children }: ViewStateContextProviderProps) {
   console.log('ViewStateContextProvider.render');
-  const [viewState, setViewState] = useState<ViewState>({
+  const [viewState, setViewState] = React.useState<ViewState>({
     isEditing: false,
   });
 
@@ -30,7 +30,7 @@ function ViewStateContextProvider({ children }: ViewStateContextProviderProps) {
 
 // ---------- useViewStateContext ----------
 function useViewStateContext() {
-  const viewStateContext = useContext(ViewStateContext);
+  const viewStateContext = React.useContext(ViewStateContext);
   /* istanbul ignore next */
   if (viewStateContext === undefined) {
     throw new Error(
